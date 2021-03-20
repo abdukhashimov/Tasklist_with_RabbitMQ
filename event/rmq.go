@@ -1,15 +1,17 @@
 package event
 
 import (
-	"bitbucket.org/alien_soft/TaskListRabbitMQ/task"
 	"encoding/json"
-	"github.com/streadway/amqp"
 	"log"
+
+	"bitbucket.org/alien_soft/TaskListRabbitMQ/task"
+	"github.com/streadway/amqp"
 )
 
 type RabbitMQ struct {
 	Channel *amqp.Channel
 }
+
 //Connection
 //Declare Exchange
 //Declare queue
@@ -37,7 +39,7 @@ func NewRabbitMQ() RabbitMQ {
 		false,
 		false,
 		nil,
-		)
+	)
 
 	if err != nil {
 		log.Panic("Failed to declare exchange", err)
@@ -50,7 +52,7 @@ func NewRabbitMQ() RabbitMQ {
 		true,
 		false,
 		nil,
-		)
+	)
 
 	if err != nil {
 		log.Panic("Error to declare queue", err)
@@ -63,12 +65,11 @@ func NewRabbitMQ() RabbitMQ {
 		true,
 		false,
 		nil,
-		)
+	)
 
 	if err != nil {
 		log.Panic("Error to declare queue", err)
 	}
-
 
 	err = ch.QueueBind(
 		queue1.Name,
@@ -76,7 +77,7 @@ func NewRabbitMQ() RabbitMQ {
 		"course",
 		false,
 		nil,
-		)
+	)
 
 	if err != nil {
 		log.Panic("Error while binding to exchange", err)
@@ -112,8 +113,10 @@ func (r *RabbitMQ) Publish(exchangeName, route string, body task.Task) error {
 		false,
 		amqp.Publishing{
 			ContentType: "text/plain",
-			Body: bodyByte,
-		})
+			Body:        bodyByte,
+		},
+	)
+
 	if err != nil {
 		return err
 	}
