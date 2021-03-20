@@ -9,7 +9,8 @@ import (
 )
 
 type RabbitMQ struct {
-	Channel *amqp.Channel
+	Channel    *amqp.Channel
+	Connection *amqp.Connection
 }
 
 //Connection
@@ -17,7 +18,6 @@ type RabbitMQ struct {
 //Declare queue
 func NewRabbitMQ() RabbitMQ {
 	conn, err := amqp.Dial("amqp://admin:admin@localhost:5672/")
-	defer conn.Close()
 
 	if err != nil {
 		log.Panic("Failed to connection RabbitMQ", err)
@@ -28,8 +28,6 @@ func NewRabbitMQ() RabbitMQ {
 	if err != nil {
 		log.Panic("Failed to create a new channel", err)
 	}
-
-	defer ch.Close()
 
 	err = ch.ExchangeDeclare(
 		"course",
@@ -96,7 +94,8 @@ func NewRabbitMQ() RabbitMQ {
 	}
 
 	return RabbitMQ{
-		Channel: ch,
+		Channel:    ch,
+		Connection: conn,
 	}
 }
 
